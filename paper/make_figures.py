@@ -86,7 +86,7 @@ def fig_schematic() -> None:
         2.1,
         2.0,
         "Empirical grounding",
-        ["24 tasks (E0/E1/E2)", "22 SOC occupations", "8 sectors", "exposure, difficulty,", "augmentation"],
+        ["24 tasks (E0/E1/E2)", "27 occupations", "(incl. junior/senior splits)", "8 sectors", "exposure, difficulty, augmentation"],
         "#E8F0FE",
     )
     box(
@@ -228,7 +228,7 @@ def fig_inequality_beveridge() -> None:
     for frame, cmap, label in ((base, "Blues", "no-AI baseline"), (fast, "Oranges", "fast takeoff")):
         u = frame["unemployment_rate"]
         v = frame["vacancy_count"] / 2000.0
-        sc = ax.scatter(u, v, c=frame.index, cmap=cmap, s=7, label=label)
+        ax.scatter(u, v, c=frame.index, cmap=cmap, s=7, label=label)
     ax.set_title("Beveridge curve trace (colour = time)")
     ax.set_xlabel("unemployment rate")
     ax.set_ylabel("vacancy rate")
@@ -323,6 +323,100 @@ def fig_sweep() -> None:
     plt.close(fig)
 
 
+def fig_seniority() -> None:
+    """Phase A seniority split: pyramid inversion in knowledge occupations."""
+    fast_cfg = load_preset("fast_takeoff").model_copy(update={"seed": 42, "n_workers": 2000})
+    fast_model = LabourMarketModel(fast_cfg)
+    fast_model.run()
+    fast = fast_model.datacollector.get_model_vars_dataframe()
+
+    base_model = LabourMarketModel(no_ai_config())
+    base_model.run()
+    base = base_model.datacollector.get_model_vars_dataframe()
+    print("seniority scenario runs done")
+
+    def group_wage_median(model, suffix: str) -> float:
+        wages = [
+            w.wage
+            for w in model.workers
+            if w.state == "employed" and w.occupation.endswith(suffix)
+        ]
+        return float(np.median(wages)) if wages else float("nan")
+
+    fig, axes = plt.subplots(1, 3, figsize=(11.0, 3.4))
+    x = fast.index / 12.0
+
+    ax = axes[0]
+    ax.plot(x, fast["knowledge_junior_share"], color="#D55E00", label="junior (fast takeoff)")
+    ax.plot(x, fast["knowledge_senior_share"], color="#0072B2", label="senior (fast takeoff)")
+    ax.plot(x, base["knowledge_junior_share"], color="#D55E00", ls=":", alpha=0.7, label="junior (no AI)")
+    ax.plot(x, base["knowledge_senior_share"], color="#0072B2", ls=":", alpha=0.7, label="senior (no AI)")
+    ax.set_title("Knowledge-occupation employment (share of workforce)")
+    ax.set_xlabel("years")
+    ax.legend(fontsize=7, frameon=False)
+
+    ax = axes[1]
+    ax.plot(x, fast["knowledge_pyramid_ratio"], color="#D55E00", label="fast takeoff")
+    ax.plot(x, base["knowledge_pyramid_ratio"], color="#0072B2", ls=":", label="no AI")
+    ax.axhline(1.0, color="#666", lw=0.8, ls="--")
+    ax.annotate("inversion (ratio = 1)", (11, 1.08), fontsize=7, color="#666")
+    ax.set_title("Pyramid ratio: employed juniors per senior")
+    ax.set_xlabel("years")
+    ax.legend(fontsize=7, frameon=False)
+
+    ax = axes[2]
+    window = slice(6, 96)
+    ax.plot(x[window], fast["entrant_junior_share"].iloc[window], color="#009E73", label="entrants (staff)")
+    ax.plot(x[window], fast["incumbent_junior_share"].iloc[window], color="#CC79A7", label="t0 incumbents (staff)")
+    ax.set_title("Junior share of split-occupation staff")
+    ax.set_xlabel("years")
+    ax.set_ylim(0, 1)
+    ax.legend(fontsize=7, frameon=False)
+
+    fig.tight_layout()
+    fig.savefig(FIG_DIR / "fig_seniority.png")
+    plt.close(fig)
+
+    # Multi-seed medians for the paper text.
+    ratios_start, ratios_end, junior_drop, senior_change, ent, inc = [], [], [], [], [], []
+    premium_start, premium_end = [], []
+    for seed in (1, 2, 3, 4, 5):
+        cfg = load_preset("fast_takeoff").model_copy(update={"seed": seed, "n_workers": 1500})
+        model = LabourMarketModel(cfg)
+        model.run(12)
+        premium_start.append(group_wage_median(model, "-SR") / group_wage_median(model, "-JR"))
+        model.run(228)
+        premium_end.append(group_wage_median(model, "-SR") / group_wage_median(model, "-JR"))
+        frame = model.datacollector.get_model_vars_dataframe()
+        ratios_start.append(frame["knowledge_pyramid_ratio"].iloc[:12].mean())
+        ratios_end.append(frame["knowledge_pyramid_ratio"].iloc[-12:].mean())
+        junior_drop.append(
+            frame["knowledge_junior_share"].iloc[-12:].mean()
+            / frame["knowledge_junior_share"].iloc[:12].mean()
+        )
+        senior_change.append(
+            frame["knowledge_senior_share"].iloc[-12:].mean()
+            / frame["knowledge_senior_share"].iloc[:12].mean()
+        )
+        w = frame.iloc[18:48]
+        ent.append(w["entrant_junior_share"].mean())
+        inc.append(w["incumbent_junior_share"].mean())
+        print(f"seniority seed {seed} done")
+
+    stats = {
+        "pyramid_ratio_start_median": float(np.median(ratios_start)),
+        "pyramid_ratio_end_median": float(np.median(ratios_end)),
+        "junior_employment_end_over_start_median": float(np.median(junior_drop)),
+        "senior_employment_end_over_start_median": float(np.median(senior_change)),
+        "entrant_junior_share_window_median": float(np.median(ent)),
+        "incumbent_junior_share_window_median": float(np.median(inc)),
+        "senior_junior_wage_premium_y1_median": float(np.median(premium_start)),
+        "senior_junior_wage_premium_end_median": float(np.median(premium_end)),
+    }
+    (FIG_DIR / "_seniority.json").write_text(json.dumps(stats, indent=2))
+    print("seniority stats:", stats)
+
+
 def calibration_table() -> None:
     model = LabourMarketModel(no_ai_config(seed=42))
     model.run()
@@ -348,4 +442,5 @@ if __name__ == "__main__":
     fig_montecarlo()
     fig_policy()
     fig_sweep()
+    fig_seniority()
     print("ALL FIGURES DONE")

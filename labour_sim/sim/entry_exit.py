@@ -1,9 +1,11 @@
 """Firm demography: sustained low demand forces exit; profitable sectors attract
-entrants that start AI-native (lower adoption hurdles), a vintage effect that
-accelerates tipping."""
+AI-native entrants — lower adoption hurdles AND a one-time evaluation of the
+full current technology menu at founding — a vintage effect that accelerates
+tipping and lets new firms be born with post-AI organizational structures."""
 
 from typing import TYPE_CHECKING
 
+from labour_sim.sim.adoption import _mean_wage, adoption_probability, sector_adoption_shares
 from labour_sim.sim.firms import FirmAgent
 
 if TYPE_CHECKING:
@@ -56,17 +58,33 @@ def _spawn_entrant(model: "LabourMarketModel", sector_id: str) -> None:
     )
     firm = FirmAgent(model, sector=sector_id, adoption_hurdle=float(hurdle))
 
+    # Sample the entrant's composition from the sector mix so small firms are
+    # statistically representative (a greedy largest-weight fill would never
+    # allocate low-share occupations such as senior variants).
     size = sector.firm_size_min
-    mix = sorted(sector.occupation_mix.items(), key=lambda kv: kv[1], reverse=True)
+    occupations = list(sector.occupation_mix)
+    weights = [sector.occupation_mix[o] for o in occupations]
+    draws = model.np_rng.choice(len(occupations), size=size, p=weights)
     targets: dict[str, int] = {}
-    remaining = size
-    for occupation, weight in mix:
-        n = min(remaining, max(1, round(size * weight)))
-        if n <= 0:
-            break
-        targets[occupation] = n
-        remaining -= n
-        if remaining <= 0:
-            break
+    for index in draws:
+        occupation = occupations[int(index)]
+        targets[occupation] = targets.get(occupation, 0) + 1
     firm.base_targets = targets
     firm.target_occupations = dict(targets)
+
+    # AI-native founding: unlike incumbents, who discover the technology menu
+    # a few sampled tasks per month, a new firm evaluates the entire current
+    # menu once at birth — it never builds the organizational structure that
+    # yesterday's technology implied.
+    adoption_cfg = model.cfg.adoption
+    peer_share = sector_adoption_shares(model).get(sector_id, 0.0)
+    wage = _mean_wage(firm, model)
+    for task_id in firm.task_profile(model.dataset):
+        quality = model.capability.task_quality(model.dataset.tasks[task_id])
+        if quality <= 0.0 or wage <= 0.0:
+            continue
+        unit_ai_cost = model.ai_price / quality + adoption_cfg.adjustment_cost / 12.0
+        roi = (wage - unit_ai_cost) / wage
+        p = adoption_probability(model, firm, roi=roi, peer_share=peer_share)
+        if model.np_rng.uniform() < p:
+            firm.adopted.add(task_id)

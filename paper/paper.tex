@@ -40,7 +40,10 @@ roughly 80\% while labour-market distress climbs from an early displacement spik
 20\% of the workforce toward a third under sustained automation, that median wages
 halve while within-labour dispersion \emph{compresses} toward the benefit
 floor---shifting the surplus toward firms rather than spreading it among
-workers---and that canonical policy levers are strikingly non-robust:
+workers---that in knowledge occupations split into junior and senior variants the
+pyramidal apprenticeship structure \emph{inverts}, with the junior rung eliminated
+within years while augmented senior employment persists---and that canonical policy
+levers are strikingly non-robust:
 unemployment-benefit generosity lowers median peak distress in the final specification
 yet worsens a minority of seeds and reversed sign under an earlier revision of the
 demand block; employment protection leaves median peak distress essentially unchanged
@@ -371,6 +374,68 @@ most cleanly at slow and moderate speeds. At the fastest growth rates the two-se
 medians are visibly noisy, echoing the seed sensitivity of Section~\ref{sec:policy} and
 motivating the denser replication proposed in Section~\ref{sec:future}.
 
+\subsection{Organizational structure: the inverting pyramid}
+\label{sec:pyramid}
+
+Knowledge-intensive professional-service industries---consultancies, law firms,
+engineering design, agencies---have historically organized as pyramids: a few partners
+atop many mid-level and still more junior staff, with the junior layer serving both as
+billable leverage and as the apprenticeship pipeline that produces future seniors.
+Practitioner observation suggests AI-native firms in these sectors are emerging as
+small \emph{inverted} pyramids: many senior experts exercising judgment, supported by
+AI agents rather than junior staff. To test whether task-level economics alone can
+generate this, we split five knowledge occupations (SOC 13, 15, 17, 23, 27) into
+junior and senior variants: juniors carry the E2-heavy execution mass (research,
+drafting, analysis, document review), seniors the judgment mass (negotiation,
+strategy, supervision---E1 tasks with high difficulty and high augmentation), with
+65/35 pyramid employment shares and a $\sim$2$\times$ senior wage premium. We also
+sharpen the vintage effect: entrants now evaluate the \emph{entire} current technology
+menu once at founding, so a new firm never builds the structure yesterday's technology
+implied.
+
+The task-level mechanism is sufficient for inversion, and brutally so
+(Figure~\ref{fig:seniority}). Under fast takeoff, junior knowledge employment collapses
+from 8\% of the workforce to zero within roughly five years---the five-seed median of
+end-of-run junior employment is exactly zero---while senior employment persists
+(median retention 1.01) as augmentation offsets the automation of seniors' residual
+execution tasks. The pyramid ratio crosses inversion around year three and the junior
+rung then ceases to exist: by the end of the run the senior--junior wage premium is not
+large but \emph{undefined}, because there are no employed juniors left to compare.
+Displaced juniors do not simply become seniors---four of the five junior--senior task
+distances exceed the near-search radius, so the move requires the long-unemployment
+retraining channel and its skill discount---they scatter across the wider occupation
+space or into the unemployment and discouragement pools of Section~4.2.
+
+The entrant/incumbent contrast, however, is largely \emph{not} reproduced, and the
+failure is informative. AI-native entrants are directionally flatter during the cascade
+(median junior staff share 0.49 vs.\ 0.53 for surviving $t_0$ incumbents), but the gap
+is an order of magnitude smaller than the aggregate collapse, and both populations
+converge to zero-junior structures within about two years of each other
+(Figure~\ref{fig:seniority}, right). The reason is that the model's incumbents
+re-optimize headcount targets monthly against weak adjustment frictions---they behave,
+organizationally, like entrants with a legacy balance sheet. The stark
+flat-entrant-beside-pyramidal-incumbent contrast observed in practice therefore cannot
+be explained by differential technology access alone; within this framework it requires
+multi-year organizational inertia in incumbents, an explicit apprenticeship production
+function in which juniors are an investment in future seniors, or both. That
+identification is Phase~A's most useful output: it converts a qualitative industry
+observation into a measurement of organizational adjustment frictions, and it
+motivates the promotion-channel extension of Section~\ref{sec:future}, where the
+elimination of the junior rung should surface as a delayed senior-supply shortage
+rather than today's quiet persistence.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_seniority.png}
+\caption{The inverting pyramid (fast takeoff, seed 42, $N=2{,}000$; five-seed medians
+in text). Left: junior knowledge employment collapses to zero while senior employment
+persists; both are flat without AI. Centre: the junior:senior ratio crosses inversion
+around year three. Right: AI-native entrants are only marginally flatter than
+monthly-reoptimizing incumbents---the observed real-world contrast implies
+organizational inertia the model does not yet contain.}
+\label{fig:seniority}
+\end{figure}
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.55\textwidth]{figures/fig_sweep.png}
@@ -478,7 +543,13 @@ implied occupation-distance matrix against observed occupational-transition matr
 slower, capital-intensive schedule; endogenize task creation
 \citep{acemoglu2019automation} so reinstatement competes with displacement; introduce
 aggregate-demand feedback and firm balance sheets in the spirit of
-\citet{dosi2010schumpeter}; let firms form expectations over the capability path.
+\citet{dosi2010schumpeter}; let firms form expectations over the capability path. Most
+immediately, Section~\ref{sec:pyramid} calls for a promotion channel (``Phase~B''):
+senior vacancies restricted to workers with junior tenure, plus explicit organizational
+adjustment inertia. Only then can the model price the apprenticeship
+externality---individually rational junior cuts destroying the industry's future senior
+supply---and reproduce the flat-entrant/pyramidal-incumbent contrast observed in
+practice.
 \emph{Third, deeper validation.} Confront the model with the emerging quasi-experimental
 evidence on AI exposure and hiring \citep{hampole2025ai}, and test whether simulated
 occupational wage responses match early observational estimates; historical automation

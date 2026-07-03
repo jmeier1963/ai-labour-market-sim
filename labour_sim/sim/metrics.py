@@ -135,6 +135,60 @@ def market_tightness_metric(model: "LabourMarketModel") -> float:
     return vacancy_count(model) / searchers if searchers else 0.0
 
 
+# --- Phase A seniority split: pyramid diagnostics over -JR/-SR occupations ---
+
+
+def _pyramid_counts(model: "LabourMarketModel") -> tuple[int, int]:
+    junior = senior = 0
+    for worker in model.workers:
+        if worker.state != EMPLOYED:
+            continue
+        if worker.occupation.endswith("-JR"):
+            junior += 1
+        elif worker.occupation.endswith("-SR"):
+            senior += 1
+    return junior, senior
+
+
+def knowledge_pyramid_ratio(model: "LabourMarketModel") -> float:
+    """Employed juniors per employed senior across the split occupations."""
+    junior, senior = _pyramid_counts(model)
+    return junior / senior if senior else float("nan")
+
+
+def knowledge_junior_share(model: "LabourMarketModel") -> float:
+    junior, _ = _pyramid_counts(model)
+    return junior / len(model.workers)
+
+
+def knowledge_senior_share(model: "LabourMarketModel") -> float:
+    _, senior = _pyramid_counts(model)
+    return senior / len(model.workers)
+
+
+def _firm_junior_share(firms) -> float:
+    """Junior share of the split-occupation mass among actual employees — the
+    observable organizational composition (targets would show intent, which
+    converges much faster than staffing under adjustment frictions)."""
+    junior = senior = 0
+    for firm in firms:
+        for worker in firm.employees:
+            if worker.occupation.endswith("-JR"):
+                junior += 1
+            elif worker.occupation.endswith("-SR"):
+                senior += 1
+    total = junior + senior
+    return junior / total if total else float("nan")
+
+
+def entrant_junior_share(model: "LabourMarketModel") -> float:
+    return _firm_junior_share(f for f in model.firms if f.age < model.steps)
+
+
+def incumbent_junior_share(model: "LabourMarketModel") -> float:
+    return _firm_junior_share(f for f in model.firms if f.age >= model.steps)
+
+
 def model_reporters() -> dict[str, Callable]:
     return {
         "unemployment_rate": unemployment_rate,
@@ -153,5 +207,10 @@ def model_reporters() -> dict[str, Callable]:
         "output_index": output_index,
         "layoff_rate": layoff_rate,
         "market_tightness": market_tightness_metric,
+        "knowledge_pyramid_ratio": knowledge_pyramid_ratio,
+        "knowledge_junior_share": knowledge_junior_share,
+        "knowledge_senior_share": knowledge_senior_share,
+        "entrant_junior_share": entrant_junior_share,
+        "incumbent_junior_share": incumbent_junior_share,
         **{f"wage_p{p}": _wage_percentile(p) for p in (10, 25, 50, 75, 90)},
     }

@@ -12,8 +12,11 @@ anywhere in the code.
   Eloundou-et-al.-style exposure classes (E0 not exposed / E1 LLM-exposed /
   E2 LLM+software), a `difficulty` (capability level at which AI clears the
   task), and an `augmentation` boost for humans on non-automated exposed tasks.
-- **Occupations** (22 SOC major groups): task-weight vectors, base wages,
-  employment shares. Occupation distance = 1 − cosine(task weights); retraining
+- **Occupations** (SOC major groups; 27 after the Phase-A seniority split of
+  SOC 13/15/17/23/27 into junior/senior variants — juniors carry the E2-heavy
+  execution task mass, seniors the judgment/supervision/negotiation mass, with
+  65/35 pyramid shares and a senior wage premium): task-weight vectors, base
+  wages, employment shares. Occupation distance = 1 − cosine(task weights); retraining
   feasibility therefore *derives from the task data*.
 - **Workers**: occupation, lognormal skill, state (employed / searching /
   discouraged), wage, reservation wage, unemployment spell, tenure.
@@ -81,6 +84,14 @@ separations ~0.6–2.5%/month, wage Gini 0.20–0.45, no employment drift. See
 - **Wage collapse with compression**: under fast takeoff the median wage
   roughly halves while within-labour Gini slightly *falls* — the distribution
   compresses toward the benefit floor as surplus shifts from labour to firms.
+- **The pyramid inverts** (Phase-A seniority split): junior labour demand in
+  knowledge occupations is eliminated under fast takeoff while senior demand
+  largely persists (pyramid ratio ~1.8 → ~0). But the inversion is
+  near-universal and fast: AI-native entrants (which evaluate the full
+  technology menu at founding) and monthly-reoptimizing incumbents converge
+  to similar compositions — the empirically observed flat-entrant vs
+  pyramidal-incumbent contrast requires organizational inertia and/or an
+  apprenticeship pipeline (Phase B: promotion channel).
 
 ## Limitations
 

@@ -213,7 +213,10 @@ cd paper && xelatex paper.tex && bibtex paper && xelatex paper.tex && xelatex pa
 ## Data
 
 Task exposure classes follow Eloundou et al. (2023) E0/E1/E2; occupations are
-SOC major groups; sectors carry over from the legacy model. **All bundled
+SOC major groups, with five knowledge occupations split into junior/senior
+variants to study pyramid/apprenticeship dynamics (metrics:
+`knowledge_pyramid_ratio`, `knowledge_junior_share`, `entrant_junior_share`,
+…); sectors carry over from the legacy model. **All bundled
 values are placeholders** pending curation — every record carries a `source`
 field, and [docs/data-sources.md](docs/data-sources.md) maps each field to its
 curation target. To experiment with your own assumptions, edit the JSON files
