@@ -1,11 +1,20 @@
 # AI Labour Market Simulator (Agent-Based Model)
 
+[![CI](https://github.com/jmeier1963/ai-labour-market-sim/actions/workflows/ci.yml/badge.svg)](https://github.com/jmeier1963/ai-labour-market-sim/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python 3.13](https://img.shields.io/badge/python-3.13-blue.svg)](pyproject.toml)
+
 An agent-based simulator of AI adoption dynamics at the **organizational** and
 **labour-market** level. Individual firms decide task-by-task AI adoption on
 ROI and peer imitation; individual workers search, match, retrain, and bargain
 over wages. Tipping points, S-curves, displacement waves, wage scarring, and
 inequality dynamics **emerge** from micro-interactions — nothing is a sigmoid
 of time.
+
+![Live dashboard: agent-space view mid-cascade with time-series panels](paper/figures/app_live.png)
+*The live dashboard at month 65 of a fast takeoff: the adoption cascade sweeps
+through sector clusters (firm squares turn yellow) while displaced workers
+gather in the central ring and the unemployment spike unwinds.*
 
 Built with [Mesa 3](https://mesa.readthedocs.io/) (ABM engine) and
 [Solara](https://solara.dev/) (interactive dashboard). The previous aggregate
@@ -210,6 +219,13 @@ field, and [docs/data-sources.md](docs/data-sources.md) maps each field to its
 curation target. To experiment with your own assumptions, edit the JSON files
 in `labour_sim/data/` (weights and shares are normalized at load, so they only
 need to be approximately consistent).
+
+## License and citation
+
+MIT — see [LICENSE](LICENSE). If you build on the model academically, please
+cite the accompanying paper ([paper/paper.pdf](paper/paper.pdf)): *Meier, J.
+(2026). Emergent Tipping Points in AI Labour Markets: Design and Outcomes of a
+Task-Based Agent-Based Simulator.*
 
 ## Troubleshooting
 
