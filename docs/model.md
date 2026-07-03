@@ -1,5 +1,10 @@
 # Model description
 
+> A visual companion: [dependency-graph.html](dependency-graph.html) renders
+> every mechanism below and its "reads from" relations as an interactive
+> force-directed graph (node/edge source of truth:
+> `paper/dependency_data.py`).
+
 An agent-based model of AI adoption at the organizational and labour-market
 level. ~5,000 workers and ~400–500 firms interact on a monthly clock; S-curves,
 adoption cascades, displacement waves, wage scarring, and Beveridge-curve

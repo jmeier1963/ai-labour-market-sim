@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI labour market simulator — model dependency graph</title>
+<style>
+:root {
+  --bg: #ffffff; --text: #1a1a19; --muted: #6b6a66; --line: #d8d7d0;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #1a1a19; --text: #f0efe9; --muted: #a3a29b; --line: #3a3a37; }
+}
+body { margin: 0 auto; max-width: 900px; padding: 24px 20px 48px; background: var(--bg);
+       color: var(--text); font: 15px/1.6 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+h1 { font-size: 21px; font-weight: 600; margin: 0 0 4px; }
+h2 { font-size: 16px; font-weight: 600; margin: 28px 0 8px; }
+p { margin: 6px 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--muted); margin: 10px 0; }
+.legend span { display: flex; align-items: center; gap: 5px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+#info { font-size: 13px; color: var(--muted); min-height: 20px; margin: 6px 0 0; }
+svg { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; }
+.note { font-size: 13px; color: var(--muted); }
+ul { margin: 6px 0; padding-left: 22px; }
+li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<h1>Model dependency graph</h1>
+<p class="note">Every node is a mechanism of the
+<a href="https://github.com/jmeier1963/ai-labour-market-sim">agent-based AI labour market simulator</a>;
+every arrow is a "reads from" dependency extracted from the paper's model description
+(Section 3 tick order, entities, policy parameters, outcomes). Node size reflects connectivity.
+Hover a node to isolate its dependencies; drag to rearrange. Requires an internet
+connection for the D3 library.</p>
+<div class="legend">
+  <span><span class="dot" style="background:#7F77DD"></span>Technology and data</span>
+  <span><span class="dot" style="background:#D85A30"></span>Firms</span>
+  <span><span class="dot" style="background:#1D9E75"></span>Workers and matching</span>
+  <span><span class="dot" style="background:#D4537E"></span>Policy levers</span>
+  <span><span class="dot" style="background:#888780"></span>Emergent outcomes</span>
+</div>
+<div id="graph"></div>
+<p id="info">Hover a node to isolate its dependencies. Drag to rearrange.</p>
+
+<h2>How to read the graph</h2>
+<ul>
+  <li><strong>Hubs.</strong> <em>Task adoption</em> (where the technology block converges and the firm
+      block fans out) and <em>job searchers</em> (where every displacement channel pools before the
+      matching bottleneck) are the model's load-bearing joints.</li>
+  <li><strong>Feedback loops.</strong> Four cycles make outcomes emergent: <em>imitation</em>
+      (adoption → peer imitation → adoption), <em>demand rebound</em>
+      (adoption → price → demand factor → headcount targets), <em>displacement–congestion</em>
+      (layoffs → searchers → reservation wage → wages → adoption ROI), and the small
+      <em>discouragement</em> cycle (searchers ↔ discouragement).</li>
+  <li><strong>Policy periphery.</strong> Each policy lever touches a single edge of the densely
+      cyclic core — the graph-structural reason the paper finds policy effects seed- and
+      specification-sensitive.</li>
+  <li><strong>Missing loop.</strong> Outcomes have no outgoing edges; in particular nothing feeds
+      back from unemployment into demand — the absent aggregate-demand channel listed in the
+      paper's limitations.</li>
+</ul>
+<p class="note">Data source of truth: <code>paper/dependency_data.py</code> (keep this file in sync
+when the model changes). A static rendering appears in the paper's appendix.</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+const GROUPS = {
+  tech: {fill:"#7F77DD", stroke:"#534AB7", x:120, y:170},
+  firm: {fill:"#D85A30", stroke:"#993C1D", x:430, y:210},
+  lab:  {fill:"#1D9E75", stroke:"#0F6E56", x:360, y:520},
+  pol:  {fill:"#D4537E", stroke:"#993556", x:130, y:600},
+  out:  {fill:"#888780", stroke:"#5F5E5A", x:700, y:400}
+};
+const N = [
+ ["taskdata","tech","Task data","24 tasks with E0/E1/E2 exposure, difficulty, augmentation"],
+ ["capability","tech","Capability","Logistic frontier C(t) with seeded AR(1) shocks"],
+ ["aiprice","tech","AI price","Exponentially declining cost per task unit"],
+ ["quality","tech","Task quality","q = clamp((C_eff - difficulty)/(1 - difficulty)); E1 penalty"],
+ ["augment","tech","Augmentation","Boost on non-automated exposed tasks; responds to growth since t0"],
+ ["roi","firm","Adoption ROI","(wage - AI cost/q - adjustment cost) / wage"],
+ ["peer","firm","Peer imitation","Sector mean adoption share in the decision signal"],
+ ["hurdle","firm","Adoption hurdle","Heterogeneous organizational conservatism; lower for entrants"],
+ ["adoption","firm","Task adoption","Absorbing, task-by-task; sampled evaluations monthly"],
+ ["price","firm","Firm price","Unit-cost savings passed through at 60%"],
+ ["demand","firm","Demand factor","Iso-elastic sector demand split by size-weighted price logit"],
+ ["targets","firm","Headcount targets","base x demand x (1-auto)/(1+aug) per occupation"],
+ ["layoffs","firm","Layoffs","Surplus shed gradually, lowest tenure first"],
+ ["vacancies","firm","Vacancies","Posted for deficits; offers escalate while unfilled"],
+ ["exit","firm","Firm exit","Sustained demand shortfall; workforce displaced"],
+ ["entry","firm","AI-native entry","Replaces exits; evaluates full technology menu at founding"],
+ ["separations","lab","Separations","Exogenous quits ~1.2% per month"],
+ ["searchers","lab","Job searchers","Unemployed workers actively applying"],
+ ["distance","lab","Occupation distance","1 - cosine of task vectors; prices retraining moves"],
+ ["matching","lab","Matching","~5 applications, skill ranking, screening-efficiency coin"],
+ ["mp","lab","Marginal product","base wage x skill x (1-auto)(1+aug)"],
+ ["wages","lab","Wages","Nash split of marginal product and reservation"],
+ ["reservation","lab","Reservation wage","Decays 1%/month unemployed toward the benefit floor"],
+ ["discourage","lab","Discouragement","24-month spells exit the labour force; 3%/month re-entry"],
+ ["benefit","pol","Benefit level","Reservation-wage floor vs t0 median wage"],
+ ["subsidy","pol","Retraining subsidy","Offsets the cross-occupation skill discount"],
+ ["firingcost","pol","Firing cost","Slows shedding of surplus workers"],
+ ["mefficiency","pol","Matching efficiency","Chance a staffed vacancy closes each month"],
+ ["unemployment","out","Unemployment","Plus discouraged share = distress"],
+ ["output","out","Output","Volume index from sector demand"],
+ ["gini","out","Wage distribution","Percentile fan, Gini; collapse with compression"],
+ ["beveridge","out","Beveridge curve","Vacancy-unemployment loop; mismatch signature"],
+ ["pyramid","out","Pyramid inversion","Junior:senior ratio in knowledge occupations"]
+];
+const L = [
+ ["taskdata","quality"],["capability","quality"],["capability","augment"],["taskdata","augment"],["taskdata","distance"],
+ ["quality","roi"],["aiprice","roi"],["wages","roi"],
+ ["roi","adoption"],["peer","adoption"],["hurdle","adoption"],["adoption","peer"],["entry","adoption"],
+ ["adoption","price"],["augment","price"],["price","demand"],
+ ["demand","targets"],["adoption","targets"],["augment","targets"],
+ ["targets","layoffs"],["firingcost","layoffs"],["targets","vacancies"],
+ ["demand","exit"],["exit","searchers"],["exit","entry"],
+ ["layoffs","searchers"],["separations","searchers"],
+ ["searchers","matching"],["vacancies","matching"],["distance","matching"],["mefficiency","matching"],["reservation","matching"],
+ ["matching","wages"],["mp","wages"],["reservation","wages"],
+ ["adoption","mp"],["augment","mp"],["subsidy","mp"],
+ ["benefit","reservation"],["searchers","reservation"],
+ ["searchers","discourage"],["discourage","searchers"],
+ ["searchers","unemployment"],["discourage","unemployment"],
+ ["demand","output"],["wages","gini"],
+ ["vacancies","beveridge"],["unemployment","beveridge"],
+ ["targets","pyramid"]
+];
+const nodes = N.map(n => ({id:n[0], g:n[1], label:n[2], desc:n[3]}));
+const links = L.map(l => ({source:l[0], target:l[1]}));
+const deg = {};
+links.forEach(l => { deg[l.source]=(deg[l.source]||0)+1; deg[l.target]=(deg[l.target]||0)+1; });
+nodes.forEach(n => n.r = Math.min(17, 7 + (deg[n.id]||1)*0.9));
+
+const W = 860, H = 760;
+const textColor = getComputedStyle(document.documentElement).getPropertyValue("--muted").trim();
+const svg = d3.select("#graph").append("svg").attr("viewBox", `0 0 ${W} ${H}`)
+  .attr("role","img").attr("aria-label","Dependency graph of the simulation model");
+svg.append("defs").append("marker").attr("id","arr").attr("viewBox","0 -4 8 8")
+  .attr("refX",7).attr("refY",0).attr("markerWidth",7).attr("markerHeight",7).attr("orient","auto")
+  .append("path").attr("d","M0,-3.5L8,0L0,3.5").attr("fill","#888780");
+
+const link = svg.append("g").selectAll("line").data(links).join("line")
+  .attr("stroke","#888780").attr("stroke-opacity",0.4).attr("stroke-width",1.4).attr("marker-end","url(#arr)");
+const node = svg.append("g").selectAll("circle").data(nodes).join("circle")
+  .attr("r",d=>d.r).attr("fill",d=>GROUPS[d.g].fill).attr("stroke",d=>GROUPS[d.g].stroke)
+  .attr("stroke-width",1.2).style("cursor","grab");
+node.append("title").text(d=>d.label+" — "+d.desc);
+const label = svg.append("g").selectAll("text").data(nodes).join("text")
+  .text(d=>d.label).attr("font-size","12px").attr("text-anchor","middle")
+  .attr("fill",textColor).style("pointer-events","none");
+
+const sim = d3.forceSimulation(nodes)
+  .force("link", d3.forceLink(links).id(d=>d.id).distance(62).strength(0.45))
+  .force("charge", d3.forceManyBody().strength(-320))
+  .force("collide", d3.forceCollide().radius(d=>d.r+18))
+  .force("x", d3.forceX(d=>GROUPS[d.g].x).strength(0.09))
+  .force("y", d3.forceY(d=>GROUPS[d.g].y).strength(0.09))
+  .on("tick", () => {
+    nodes.forEach(d => { d.x = Math.max(d.r+6, Math.min(W-d.r-6, d.x)); d.y = Math.max(d.r+8, Math.min(H-d.r-20, d.y)); });
+    link.each(function(d){
+      const dx = d.target.x-d.source.x, dy = d.target.y-d.source.y;
+      const dist = Math.max(1, Math.hypot(dx,dy));
+      const ox = dx/dist, oy = dy/dist;
+      d3.select(this)
+        .attr("x1", d.source.x+ox*d.source.r).attr("y1", d.source.y+oy*d.source.r)
+        .attr("x2", d.target.x-ox*(d.target.r+5)).attr("y2", d.target.y-oy*(d.target.r+5));
+    });
+    node.attr("cx",d=>d.x).attr("cy",d=>d.y);
+    label.attr("x",d=>d.x).attr("y",d=>d.y+d.r+13);
+  });
+
+node.call(d3.drag()
+  .on("start",(e,d)=>{ if(!e.active) sim.alphaTarget(0.25).restart(); d.fx=d.x; d.fy=d.y; })
+  .on("drag",(e,d)=>{ d.fx=e.x; d.fy=e.y; })
+  .on("end",(e,d)=>{ if(!e.active) sim.alphaTarget(0); d.fx=null; d.fy=null; }));
+
+const info = document.getElementById("info");
+node.on("mouseover",(e,d)=>{
+  const nb = new Set([d.id]);
+  links.forEach(l => { if(l.source.id===d.id) nb.add(l.target.id); if(l.target.id===d.id) nb.add(l.source.id); });
+  node.attr("opacity", n => nb.has(n.id)?1:0.15);
+  label.attr("opacity", n => nb.has(n.id)?1:0.15);
+  link.attr("stroke-opacity", l => (l.source.id===d.id||l.target.id===d.id)?0.95:0.06)
+      .attr("stroke", l => (l.source.id===d.id||l.target.id===d.id)?GROUPS[d.g].fill:"#888780");
+  info.textContent = d.label + " — " + d.desc;
+}).on("mouseout",()=>{
+  node.attr("opacity",1); label.attr("opacity",1);
+  link.attr("stroke-opacity",0.4).attr("stroke","#888780");
+  info.textContent = "Hover a node to isolate its dependencies. Drag to rearrange.";
+});
+</script>
+</body>
+</html>

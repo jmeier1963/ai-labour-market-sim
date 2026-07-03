@@ -572,4 +572,54 @@ methodology is itself a research contribution we intend to pursue.
 \bibliography{references}
 }
 
+\appendix
+
+\section{Appendix: the model as a dependency graph}
+\label{app:dependencies}
+
+Figure~\ref{fig:dependencies} renders the model as a systems graph: every node is a
+named mechanism from Section~3 (entities, the ten tick steps, policy parameters, and
+outcome measures), and every directed edge is a ``reads from'' dependency stated
+there---adoption ROI reads task quality, the AI price, and wages; headcount targets read
+the demand factor, adoption, and augmentation; and so on. Node size reflects
+connectivity. An interactive force-directed version with per-node documentation ships
+with the repository (\texttt{docs/dependency-graph.html}); the node and edge lists are
+maintained in \texttt{paper/dependency\_data.py}.
+
+Four structural observations summarize how the model works and why it behaves as
+reported. \emph{First, two hubs carry the system.} Task adoption is where the
+technology block converges and from which the entire firm block fans out; job searchers
+are where every displacement channel---layoffs, firm exits, exogenous
+separations---pools before the matching bottleneck. These are the load-bearing joints,
+and, not coincidentally, where the calibration gates caught all three serious
+specification errors during development. \emph{Second, four feedback loops make
+outcomes emergent rather than dial-driven}: the imitation loop (adoption
+$\to$ peer imitation $\to$ adoption) is the cascade amplifier behind the S-curves of
+Section~4.2; the demand-rebound loop (adoption $\to$ price $\to$ demand factor $\to$
+headcount targets) is the job-preserving offset; the displacement--congestion loop
+(layoffs $\to$ searchers $\to$ reservation wages $\to$ wages $\to$ adoption ROI) couples
+labour-market slack back into adoption incentives; and the small discouragement cycle
+governs labour-force attachment. \emph{Third, policy sits at the periphery}: each lever
+touches exactly one edge of the densely cyclic core (firing costs $\to$ layoffs,
+benefits $\to$ reservation wages, retraining subsidy $\to$ marginal product, matching
+efficiency $\to$ matching). This is the graph-structural counterpart of
+Section~\ref{sec:policy}'s non-robustness result---a single perturbed edge propagates
+through whichever loop dominates a given stochastic path, so the sign of the net effect
+is path-dependent. \emph{Fourth, the outcomes column has no outgoing edges}, and one
+absent arrow is diagnostic: nothing feeds back from unemployment into product demand.
+That missing aggregate-demand loop is the limitation flagged in Section~6 and the
+demand-side extension proposed in Section~\ref{sec:future}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_dependencies.png}
+\caption{The simulation model as a dependency graph. Nodes are mechanisms, grouped and
+coloured by subsystem; arrows point from a component to the components that read it;
+node size reflects connectivity. Layout flows left to right from exogenous technology
+and policy levers through the firm and labour-market blocks to emergent outcomes.}
+\label{fig:dependencies}
+\end{figure}
+
+
+
 \end{document}

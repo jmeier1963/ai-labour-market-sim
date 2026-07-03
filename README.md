@@ -167,7 +167,11 @@ payload = scenario_to_json(Scenario(name="my-experiment", config=cfg))
 
 All `SimConfig` fields and their meanings are documented inline in
 [labour_sim/config.py](labour_sim/config.py); the tick-by-tick model logic is
-described in [docs/model.md](docs/model.md).
+described in [docs/model.md](docs/model.md). An interactive dependency graph of
+the whole system — every mechanism and every "reads from" relation, with the
+four feedback loops annotated — is at
+[docs/dependency-graph.html](docs/dependency-graph.html) (open in a browser);
+a static version with commentary is the paper's appendix.
 
 ⚠️ `monte_carlo(..., processes>1)` uses process pools and must be called from
 an import-safe entry point (a plain script guarded by

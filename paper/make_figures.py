@@ -5,7 +5,10 @@ Parallel Monte Carlo is safe here because this script guards __main__.
 """
 
 import json
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
 
 import matplotlib
 
@@ -323,6 +326,59 @@ def fig_sweep() -> None:
     plt.close(fig)
 
 
+def fig_dependencies() -> None:
+    """Static force-directed dependency graph for the paper appendix."""
+    import networkx as nx
+
+    from dependency_data import EDGES, GROUPS, NODES, POSITIONS
+
+    graph = nx.DiGraph()
+    for node_id, group, label in NODES:
+        graph.add_node(node_id, group=group, label=label)
+    graph.add_edges_from(EDGES)
+
+    pos = POSITIONS
+
+    fig, ax = plt.subplots(figsize=(10.5, 8.0))
+    ax.axis("off")
+    degree = dict(graph.degree())
+    sizes = [120 + 55 * degree[n] for n in graph.nodes]
+    colors = [GROUPS[graph.nodes[n]["group"]]["color"] for n in graph.nodes]
+
+    nx.draw_networkx_edges(
+        graph,
+        pos,
+        ax=ax,
+        arrows=True,
+        arrowstyle="-|>",
+        arrowsize=9,
+        edge_color="#888780",
+        alpha=0.45,
+        width=0.9,
+        node_size=sizes,
+        connectionstyle="arc3,rad=0.08",
+    )
+    nx.draw_networkx_nodes(
+        graph, pos, ax=ax, node_size=sizes, node_color=colors, edgecolors="#444", linewidths=0.6
+    )
+    labels = {n: graph.nodes[n]["label"] for n in graph.nodes}
+    label_pos = {n: (x, y - 0.26) for n, (x, y) in pos.items()}
+    nx.draw_networkx_labels(graph, label_pos, labels=labels, ax=ax, font_size=7.5)
+
+    handles = [
+        plt.Line2D(
+            [], [], marker="o", ls="", markersize=8, color=spec["color"], label=spec["name"]
+        )
+        for spec in GROUPS.values()
+    ]
+    ax.legend(handles=handles, loc="lower right", fontsize=8, frameon=False)
+    ax.margins(0.05)
+    fig.tight_layout()
+    fig.savefig(FIG_DIR / "fig_dependencies.png")
+    plt.close(fig)
+    print("dependency graph done")
+
+
 def fig_seniority() -> None:
     """Phase A seniority split: pyramid inversion in knowledge occupations."""
     fast_cfg = load_preset("fast_takeoff").model_copy(update={"seed": 42, "n_workers": 2000})
@@ -443,4 +499,5 @@ if __name__ == "__main__":
     fig_policy()
     fig_sweep()
     fig_seniority()
+    fig_dependencies()
     print("ALL FIGURES DONE")
