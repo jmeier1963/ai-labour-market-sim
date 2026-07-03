@@ -1,0 +1,9 @@
+{
+  "name": "fast_takeoff",
+  "description": "Rapid capability growth, fast AI cost decline, strong imitation, low adoption hurdles.",
+  "overrides": {
+    "capability": { "growth_rate": 0.08, "ceiling": 0.98 },
+    "ai_cost": { "decline_rate": 0.03 },
+    "adoption": { "imitation_weight": 0.6, "adjustment_cost": 0.15, "hurdle_mean": 0.1 }
+  }
+}

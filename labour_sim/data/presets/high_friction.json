@@ -1,0 +1,10 @@
+{
+  "name": "high_friction",
+  "description": "Brisk AI progress meeting a rigid labour market: slow matching, weak safety net, expensive retraining.",
+  "overrides": {
+    "capability": { "growth_rate": 0.055 },
+    "matching": { "applications_per_searcher": 3, "reservation_decay": 0.02 },
+    "policy": { "benefit_level": 0.25, "retraining_subsidy": 0.1, "firing_cost": 0.05 },
+    "labour": { "retraining_wait_ticks": 12, "retraining_skill_discount": 0.45 }
+  }
+}

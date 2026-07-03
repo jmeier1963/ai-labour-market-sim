@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "note": "PLACEHOLDER DATA. The 8 sectors of the legacy aggregate model, redefined as occupation mixes. employment_share derived from the legacy jobs column (millions); demand_elasticity carried over from the legacy 'demand' column. Firm sizes drawn from a truncated Pareto.",
+  "sectors": [
+    { "id": "prof_services", "name": "Professional services", "employment_share": 0.196, "demand_elasticity": 0.55, "firm_size_alpha": 1.5, "firm_size_min": 3, "source": "legacy model.js defaults", "occupation_mix": { "SOC-13": 0.25, "SOC-15": 0.20, "SOC-23": 0.08, "SOC-17": 0.12, "SOC-27": 0.08, "SOC-11": 0.12, "SOC-43": 0.12, "SOC-19": 0.03 } },
+    { "id": "finance", "name": "Finance and insurance", "employment_share": 0.064, "demand_elasticity": 0.45, "firm_size_alpha": 1.4, "firm_size_min": 4, "source": "legacy model.js defaults", "occupation_mix": { "SOC-13": 0.35, "SOC-43": 0.25, "SOC-41": 0.12, "SOC-11": 0.12, "SOC-15": 0.16 } },
+    { "id": "manufacturing", "name": "Manufacturing", "employment_share": 0.111, "demand_elasticity": 0.70, "firm_size_alpha": 1.35, "firm_size_min": 5, "source": "legacy model.js defaults", "occupation_mix": { "SOC-51": 0.40, "SOC-49": 0.11, "SOC-17": 0.08, "SOC-11": 0.07, "SOC-43": 0.09, "SOC-53": 0.12, "SOC-13": 0.05, "SOC-47": 0.05, "SOC-45": 0.03 } },
+    { "id": "healthcare", "name": "Healthcare", "employment_share": 0.187, "demand_elasticity": 0.85, "firm_size_alpha": 1.4, "firm_size_min": 4, "source": "legacy model.js defaults", "occupation_mix": { "SOC-29": 0.35, "SOC-31": 0.30, "SOC-43": 0.12, "SOC-39": 0.08, "SOC-11": 0.05, "SOC-21": 0.10 } },
+    { "id": "education", "name": "Education", "employment_share": 0.077, "demand_elasticity": 0.65, "firm_size_alpha": 1.5, "firm_size_min": 5, "source": "legacy model.js defaults", "occupation_mix": { "SOC-25": 0.60, "SOC-43": 0.15, "SOC-11": 0.07, "SOC-21": 0.08, "SOC-35": 0.05, "SOC-37": 0.05 } },
+    { "id": "retail_hospitality", "name": "Retail and hospitality", "employment_share": 0.213, "demand_elasticity": 0.80, "firm_size_alpha": 1.6, "firm_size_min": 3, "source": "legacy model.js defaults", "occupation_mix": { "SOC-41": 0.30, "SOC-35": 0.30, "SOC-43": 0.10, "SOC-53": 0.10, "SOC-39": 0.08, "SOC-11": 0.06, "SOC-37": 0.06 } },
+    { "id": "transport_logistics", "name": "Transport and logistics", "employment_share": 0.085, "demand_elasticity": 0.72, "firm_size_alpha": 1.4, "firm_size_min": 4, "source": "legacy model.js defaults", "occupation_mix": { "SOC-53": 0.60, "SOC-43": 0.15, "SOC-49": 0.10, "SOC-11": 0.05, "SOC-51": 0.10 } },
+    { "id": "public_admin", "name": "Public administration", "employment_share": 0.068, "demand_elasticity": 0.35, "firm_size_alpha": 1.3, "firm_size_min": 8, "source": "legacy model.js defaults", "occupation_mix": { "SOC-43": 0.26, "SOC-13": 0.14, "SOC-33": 0.19, "SOC-11": 0.09, "SOC-23": 0.05, "SOC-21": 0.09, "SOC-15": 0.09, "SOC-47": 0.06, "SOC-19": 0.03 } }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "policy_cushion",
+  "description": "Same AI path as fast takeoff but with a strong safety net and heavily subsidised retraining.",
+  "overrides": {
+    "capability": { "growth_rate": 0.08, "ceiling": 0.98 },
+    "ai_cost": { "decline_rate": 0.03 },
+    "adoption": { "imitation_weight": 0.6, "adjustment_cost": 0.15, "hurdle_mean": 0.1 },
+    "policy": { "benefit_level": 0.65, "retraining_subsidy": 0.7, "firing_cost": 0.4 },
+    "labour": { "retraining_wait_ticks": 3, "retraining_skill_discount": 0.8 }
+  }
+}

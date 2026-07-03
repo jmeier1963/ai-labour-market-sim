@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "note": "PLACEHOLDER DATA. Generalized work activities with AI exposure classes following Eloundou et al. (2023) E0/E1/E2. Difficulty = capability level at which the task becomes automatable; augmentation = productivity boost to humans when AI assists but does not replace. All values are transparent placeholders pending curation against published estimates (see docs/data-sources.md).",
+  "tasks": [
+    { "id": "T_INFO_RETRIEVE", "name": "Retrieve and synthesize written information", "exposure": 2, "difficulty": 0.20, "augmentation": 0.35, "source": "placeholder; cf. Eloundou et al. 2023 (E2)" },
+    { "id": "T_WRITE_DOC", "name": "Draft documents, reports, and correspondence", "exposure": 2, "difficulty": 0.25, "augmentation": 0.40, "source": "placeholder; cf. Eloundou et al. 2023 (E2)" },
+    { "id": "T_DATA_ANALYSIS", "name": "Analyze data and perform quantitative reasoning", "exposure": 2, "difficulty": 0.35, "augmentation": 0.40, "source": "placeholder; cf. Eloundou et al. 2023 (E2)" },
+    { "id": "T_CODE", "name": "Write and maintain software", "exposure": 2, "difficulty": 0.30, "augmentation": 0.45, "source": "placeholder; cf. Anthropic Economic Index usage share" },
+    { "id": "T_ROUTINE_ADMIN", "name": "Routine administrative processing", "exposure": 2, "difficulty": 0.15, "augmentation": 0.30, "source": "placeholder; cf. Eloundou et al. 2023 (E2)" },
+    { "id": "T_SCHEDULING", "name": "Scheduling and coordination", "exposure": 1, "difficulty": 0.20, "augmentation": 0.25, "source": "placeholder (E1)" },
+    { "id": "T_CUSTOMER_COMM", "name": "Routine customer communication", "exposure": 2, "difficulty": 0.25, "augmentation": 0.30, "source": "placeholder (E2)" },
+    { "id": "T_NEGOTIATE", "name": "Negotiation and persuasion", "exposure": 1, "difficulty": 0.60, "augmentation": 0.20, "source": "placeholder (E1)" },
+    { "id": "T_TEACH", "name": "Teaching and training others", "exposure": 1, "difficulty": 0.55, "augmentation": 0.30, "source": "placeholder (E1)" },
+    { "id": "T_CARE", "name": "Physical and emotional care of people", "exposure": 0, "difficulty": 0.95, "augmentation": 0.05, "source": "placeholder (E0)" },
+    { "id": "T_MANUAL_PRECISION", "name": "Skilled manual work and craftsmanship", "exposure": 0, "difficulty": 0.90, "augmentation": 0.08, "source": "placeholder (E0)" },
+    { "id": "T_MANUAL_ROUTINE", "name": "Routine manual handling and assembly", "exposure": 0, "difficulty": 0.85, "augmentation": 0.05, "source": "placeholder (E0); robotics out of scope" },
+    { "id": "T_DRIVE", "name": "Operating vehicles", "exposure": 0, "difficulty": 0.80, "augmentation": 0.05, "source": "placeholder (E0)" },
+    { "id": "T_INSPECT_QC", "name": "Inspection and quality control", "exposure": 1, "difficulty": 0.45, "augmentation": 0.30, "source": "placeholder (E1)" },
+    { "id": "T_DESIGN_CREATIVE", "name": "Creative design and content production", "exposure": 2, "difficulty": 0.40, "augmentation": 0.35, "source": "placeholder (E2)" },
+    { "id": "T_LEGAL_COMPLIANCE", "name": "Legal and compliance review", "exposure": 2, "difficulty": 0.45, "augmentation": 0.35, "source": "placeholder (E2)" },
+    { "id": "T_FINANCIAL_TRANS", "name": "Financial transactions and bookkeeping", "exposure": 2, "difficulty": 0.20, "augmentation": 0.30, "source": "placeholder (E2)" },
+    { "id": "T_DIAGNOSE", "name": "Clinical and technical diagnosis", "exposure": 1, "difficulty": 0.60, "augmentation": 0.35, "source": "placeholder (E1)" },
+    { "id": "T_STRATEGY", "name": "Strategic planning and high-stakes decisions", "exposure": 1, "difficulty": 0.70, "augmentation": 0.25, "source": "placeholder (E1)" },
+    { "id": "T_SUPERVISE", "name": "Supervising and managing people", "exposure": 1, "difficulty": 0.65, "augmentation": 0.20, "source": "placeholder (E1)" },
+    { "id": "T_RESEARCH", "name": "Original research and experimentation", "exposure": 1, "difficulty": 0.60, "augmentation": 0.35, "source": "placeholder (E1)" },
+    { "id": "T_SELL", "name": "Sales prospecting and transactions", "exposure": 1, "difficulty": 0.40, "augmentation": 0.30, "source": "placeholder (E1)" },
+    { "id": "T_EQUIPMENT_MONITOR", "name": "Monitoring equipment and processes", "exposure": 1, "difficulty": 0.40, "augmentation": 0.30, "source": "placeholder (E1)" },
+    { "id": "T_FOOD_SERVICE", "name": "Food preparation and service", "exposure": 0, "difficulty": 0.90, "augmentation": 0.03, "source": "placeholder (E0)" }
+  ]
+}

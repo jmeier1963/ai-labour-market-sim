@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "solara",
+      "runtimeExecutable": "uv",
+      "runtimeArgs": ["run", "solara", "run", "app.py", "--port", "8765", "--no-open"],
+      "port": 8765
+    }
+  ]
+}
