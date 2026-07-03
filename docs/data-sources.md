@@ -11,7 +11,7 @@ numbers are transparent, debatable defaults in the right ballpark.
 | `tasks.json` | `augmentation` | Hand-assigned, 0–0.45 | Estimates from AI-productivity RCTs (e.g. support agents, coding studies) |
 | `occupations.json` | `employment_share`, `base_wage` | Approximate BLS OES magnitudes for SOC major groups | BLS OES May tables (latest release) |
 | `occupations.json` | `task_weights` | Hand-assigned sparse vectors | O*NET generalized work activity importance ratings |
-| `sectors.json` | `employment_share`, `demand_elasticity` | Carried over from the legacy aggregate model (`legacy/model.js`) | National accounts / literature elasticities |
+| `sectors.json` | `employment_share`, `demand_elasticity` | Carried over from the v1 aggregate model (`model.js`, removed — see git history) | National accounts / literature elasticities |
 | `sectors.json` | `occupation_mix` | Hand-assigned | BLS industry–occupation matrix |
 | `sectors.json` | firm size params | Truncated Pareto, alpha 1.3–1.6 | Business dynamics statistics firm-size distributions |
 

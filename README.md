@@ -18,7 +18,8 @@ gather in the central ring and the unemployment spike unwinds.*
 
 Built with [Mesa 3](https://mesa.readthedocs.io/) (ABM engine) and
 [Solara](https://solara.dev/) (interactive dashboard). The previous aggregate
-system-dynamics app is preserved in `legacy/`.
+system-dynamics app (vanilla JS, v1) has been removed; it remains available in
+the git history.
 
 ## Requirements and installation
 
@@ -216,7 +217,7 @@ Task exposure classes follow Eloundou et al. (2023) E0/E1/E2; occupations are
 SOC major groups, with five knowledge occupations split into junior/senior
 variants to study pyramid/apprenticeship dynamics (metrics:
 `knowledge_pyramid_ratio`, `knowledge_junior_share`, `entrant_junior_share`,
-…); sectors carry over from the legacy model. **All bundled
+…); sectors carry over from the v1 aggregate model. **All bundled
 values are placeholders** pending curation — every record carries a `source`
 field, and [docs/data-sources.md](docs/data-sources.md) maps each field to its
 curation target. To experiment with your own assumptions, edit the JSON files
@@ -255,6 +256,5 @@ labour_sim/scenarios.py versioned scenario files
 labour_sim/viz/         dashboard, agent space, diagnostics, research page
 tests/                  unit + invariant + calibration-gate tests
 docs/                   model.md (tick order, findings), data-sources.md
-paper/                  ten-page paper + figure/screenshot generation scripts
-legacy/                 the original vanilla-JS aggregate simulator
+paper/                  the paper + figure/screenshot generation scripts
 ```
